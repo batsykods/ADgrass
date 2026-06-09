@@ -4,16 +4,16 @@ import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 
 df = pd.read_csv("data/ad_data.csv")
 
 encoders = {}
 
 for col in ["Gender", "Sport", "Device", "AdCategory"]:
-    encoder = LabelEncoder()
-    df[col] = encoder.fit_transform(df[col])
-    encoders[col] = encoder
+    le = LabelEncoder()
+    df[col] = le.fit_transform(df[col])
+    encoders[col] = le
 
 X = df.drop("AdCategory", axis=1)
 y = df["AdCategory"]
@@ -34,11 +34,10 @@ model.fit(X_train, y_train)
 
 predictions = model.predict(X_test)
 
-accuracy = accuracy_score(y_test, predictions)
-
-print(f"Accuracy: {accuracy:.4f}")
+print(f"Accuracy: {accuracy_score(y_test, predictions):.4f}")
+print(classification_report(y_test, predictions))
 
 joblib.dump(model, "models/random_forest.pkl")
 joblib.dump(encoders, "models/encoders.pkl")
 
-print("Model saved successfully!")
+print("Model saved successfully.")
