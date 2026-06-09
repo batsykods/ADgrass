@@ -19,23 +19,37 @@ def recommend():
     user = request.json
 
     df = pd.DataFrame([user])
-
     for col in ["Gender", "Sport", "Device"]:
         df[col] = encoders[col].transform(df[col])
+
+    # Force same order used during training
+    df = df[
+        [
+            "Age",
+            "Gender",
+            "Sport",
+            "WatchTime",
+            "PreviousClicks",
+            "Device"
+        ]
+    ]
+
+    print("Final columns:")
+    print(df.columns.tolist())
 
     prediction = model.predict(df)
     probabilities = model.predict_proba(df)
 
     recommended_ad = encoders["AdCategory"].inverse_transform(
-        prediction
-    )[0]
+            prediction
+        )[0]
 
     confidence = float(max(probabilities[0]))
 
     return jsonify({
-        "recommended_ad": recommended_ad,
-        "confidence": round(confidence, 4)
-    })
+            "recommended_ad": recommended_ad,
+            "confidence": round(confidence, 4)
+        })
 
 
 if __name__ == "__main__":

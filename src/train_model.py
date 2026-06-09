@@ -16,6 +16,9 @@ for col in ["Gender", "Sport", "Device", "AdCategory"]:
     encoders[col] = le
 
 X = df.drop("AdCategory", axis=1)
+print("Training columns:")
+print(X.columns.tolist())
+
 y = df["AdCategory"]
 
 X_train, X_test, y_train, y_test = train_test_split(
